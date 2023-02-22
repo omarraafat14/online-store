@@ -44,6 +44,11 @@ python manage.py runserver
 # API Endpoints
 Here are the API endpoints that you can access:
 
+- 'POST /api/register/': Registers a new user account. Requires a JSON payload with username and password fields.
+- 'POST /api/login/': Logs in a user and returns a JSON Web Token (JWT) that can be used to authenticate future requests. Requires a JSON payload with username and password fields.
+- 'GET /api/products/': Returns a list of all products.
 - 'GET /api/cart/': Returns the cart object associated with the currently authenticated user (or creates a new cart object if one does not exist).
 - 'PUT /api/cart/': Updates the cart object associated with the currently authenticated user.
-- 'POST /api/order/': Creates a new order object based on the contents of the user's cart and deletes the cart's items. Returns the newly created order object.
+- 'POST /api/add-to-cart/': Adds a product to the cart. Requires a JSON payload with product and quantity fields.
+- 'POST /api/create-order/': Creates a new order object based on the contents of the user's cart and deletes the cart's items. Returns the newly created order object.
+- 'GET /api/orders/': Returns a list of all orders for the currently authenticated user.
