@@ -31,6 +31,13 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'quantity']
+        extra_kwargs = {
+            'quantity': {
+                'min_value': 1,
+                'max_value': 100,
+            },
+        }
+
 
 
 class CartSerializer(serializers.ModelSerializer):
