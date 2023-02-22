@@ -1,14 +1,19 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from rest_framework import generics, status
-from rest_framework.decorators import api_view
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
-from .models import *
-from .serializers import *
+from .models import Product, Cart, CartItem, Order, OrderItem
+from .serializers import (
+    UserSerializer,
+    ProductSerializer,
+    CartItemSerializer,
+    CartSerializer,
+    OrderSerializer
+)
+
 
 class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserSerializer
@@ -34,7 +39,6 @@ class UserLoginView(generics.GenericAPIView):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
-        
         if user:
             login(request, user)
             serializer = UserSerializer(user)
@@ -46,7 +50,7 @@ class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-    ordering_fields=['price']
+    ordering_fields = ['price']
     search_fields = ['name']
 
 
@@ -99,7 +103,7 @@ class CreateOrderView(generics.CreateAPIView):
             total += order_item.product.price * order_item.quantity
         order.total = total
         order.save()
-        OrderItem.objects.bulk_create(order_items) #creates multiple objects of the OrderItem in a snigle query
+        OrderItem.objects.bulk_create(order_items)  # creates multiple objects of the OrderItem in a snigle query
         cart.items.all().delete()
         serializer = OrderSerializer(order)
         return Response(serializer.data)

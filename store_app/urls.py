@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import *
+from .views import (
+    UserRegistrationView,
+    UserLoginView,
+    ProductListView,
+    CartView,
+    AddToCartView,
+    CreateOrderView,
+    OrderListView,
+)
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),

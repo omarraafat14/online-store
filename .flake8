@@ -1,0 +1,12 @@
+[flake8]
+exclude = .git,__pycache__,migrations,.env,task
+max-line-length = 120
+ignore = E203, E501, W503
+enable-extensions = G
+
+# Django-specific settings
+application-import-names = django, rest_framework
+settings-module = ecommerce.settings
+
+# Django Rest Framework-specific settings
+# application-import-names = rest_framework

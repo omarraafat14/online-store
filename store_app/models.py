@@ -19,7 +19,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     """instances of a Cart model"""
-    cart = models.ForeignKey(Cart,related_name='items', on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
 
