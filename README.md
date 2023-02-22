@@ -26,17 +26,17 @@ env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-5. Create a MySQL database for the project and update the DATABASES setting in 'settings.py' to reflect your database settings (e.g. database name, username, password, host, port).
+5. Create a MySQL database for the project and update the DATABASES setting in ```settings.py``` to reflect your database settings (e.g. database name, username, password, host, port).
 
 6. Run the database migrations:
-'''bash
+```bash
 python manage.py migrate
-'''
+```
 
 7. Start the Django development server:
-'''bash
+```bash
 python manage.py runserver
-'''
+```
 
 8. Navigate to http://localhost:8000/ in a web browser to access the API endpoints.
 
