@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from decimal import Decimal
 from ..models import Product, Cart, CartItem, Order, OrderItem
 from ..serializers import UserSerializer, ProductSerializer, CartItemSerializer, CartSerializer, OrderItemSerializer, OrderSerializer
+
 
 class SerializerTestCase(TestCase):
     def setUp(self):
@@ -12,8 +12,8 @@ class SerializerTestCase(TestCase):
             email='testuser@example.com'
         )
         self.product = Product.objects.create(
-            name = 'Product 1',
-            price = 10.00
+            name='Product 1',
+            price=10.00
         )
         self.cart = Cart.objects.create(user=self.user)
         self.cart_item = CartItem.objects.create(

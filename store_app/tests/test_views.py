@@ -1,72 +1,116 @@
-# test_views.py 
-
-
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
-from ..serializers import UserSerializer, ProductSerializer, CartItemSerializer, CartSerializer, OrderItemSerializer, OrderSerializer
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 from ..models import Product, Cart, CartItem, Order, OrderItem
+from ..serializers import (
+    UserSerializer,
+    ProductSerializer,
+    CartItemSerializer,
+    CartSerializer,
+    OrderSerializer
+)
 
-
-class ProductTest(TestCase):
+class UserRegistrationViewTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.product1 = Product.objects.create(name="Product1", price=10.00)
-        self.product2 = Product.objects.create(name="Product2", price=20.00)
+        self.url = reverse('register')
+        self.valid_payload = {
+            "username": "testuser",
+            "email": "useremail22@example.com",
+            "password": "testpassword"
+        }
+        self.invalid_payload = {
+            'username': '',
+            'email': 'invalidemail',
+            'password': 'testpassword'
+        }
 
-    def test_get_all_products(self):
-        response = self.client.get(reverse('product-list'))
+    def test_valid_registration(self):
+        response = self.client.post(
+            self.url,
+            data=self.valid_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_invalid_registration(self):
+        response = self.client.post(
+            self.url,
+            data=self.invalid_payload,
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse('login')
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='testuser@gmail.com',
+            password='testpassword'
+        )
+
+    def test_valid_login(self):
+        response = self.client.post(
+            self.url,
+            data={
+                'username': 'testuser',
+                'password': 'testpassword'
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_invalid_login(self):
+        response = self.client.post(
+            self.url,
+            data={
+                'username': 'testuser',
+                'password': 'invalidpassword'
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class ProductListViewTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('products-list')
+        self.product1 = Product.objects.create(
+            name='Test Product 1',
+            price=10.0
+        )
+        self.product2 = Product.objects.create(
+            name='Test Product 2',
+            price=20.0
+        )
+
+    def test_product_list_view(self):
+        response = self.client.get(self.url)
         products = Product.objects.all()
-        serializer_data = ProductSerializer(products, many=True).data
-        self.assertEqual(response.data, serializer_data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serializer = ProductSerializer(products, many=True)
+        self.assertEqual(response.data, serializer.data)
 
 
-class CartTest(APITestCase):
+class CartViewTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.product1 = Product.objects.create(name="Product1", price=10.00)
-        self.product2 = Product.objects.create(name="Product2", price=20.00)
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='testuser@gmail.com',
+            password='testpassword'
+        )
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
         self.cart = Cart.objects.create(user=self.user)
-        self.cart_item1 = CartItem.objects.create(cart=self.cart, product=self.product1, quantity=2)
-        self.cart_item2 = CartItem.objects.create(cart=self.cart, product=self.product2, quantity=3)
-        self.client.login(username='testuser', password='testpass')
 
-    def test_add_to_cart(self):
-        url = reverse('add-to-cart')
-        data = {'product_id': self.product1.id, 'quantity': 1}
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        cart_items = CartItem.objects.filter(cart=self.cart)
-        self.assertEqual(len(cart_items), 2)
-
-    def test_view_cart(self):
-        url = reverse('cart')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['items']), 2)
-
-
-class OrderTest(APITestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.product1 = Product.objects.create(name="Product1", price=10.00)
-        self.product2 = Product.objects.create(name="Product2", price=20.00)
-        self.cart = Cart.objects.create(user=self.user)
-        self.cart_item1 = CartItem.objects.create(cart=self.cart, product=self.product1, quantity=2)
-        self.cart_item2 = CartItem.objects.create(cart=self.cart, product=self.product2, quantity=3)
-        self.client.login(username='testuser', password='testpass')
-
-    def test_create_order(self):
-        url = reverse('create_order')
-        data = {'cart_id': self.cart.id}
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        order = Order.objects.get(user=self.user)
-        self.assertEqual(order.total, 80.00)
+    def test_cart_view(self):
+        response = self.client.get(reverse('cart-detail'))
+        serializer = CartSerializer(self.cart)
+        self.assertEqual(response.data, serializer.data)

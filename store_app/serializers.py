@@ -8,6 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {
+            'email': {
+                'style': {'input_type': 'email'}
+            },
             'password': {
                 'write_only': True,
                 'style': {'input_type': 'password'}
@@ -39,7 +42,6 @@ class CartItemSerializer(serializers.ModelSerializer):
         }
 
 
-
 class CartSerializer(serializers.ModelSerializer):
     """Serializer for the Cart model."""
 
@@ -68,4 +70,3 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'total', 'created_at', 'items']
-        

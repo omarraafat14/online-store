@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated , IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import AccessToken , RefreshToken
 from .models import Product, Cart, CartItem, Order, OrderItem
@@ -21,9 +21,11 @@ class UserRegistrationView(generics.GenericAPIView):
     authentication_classes = []
 
     def post(self, request):
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        if not username:
+            return Response({'error': 'username is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Hash the password before saving
         user = User.objects.create_user(username=username, email=email, password=password)
@@ -42,7 +44,6 @@ class UserLoginView(generics.GenericAPIView):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
-        
         if user:
             login(request, user)
             access = AccessToken.for_user(user)
