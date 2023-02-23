@@ -59,3 +59,21 @@ Here are the API endpoints that you can access:
 - POST /api/create-order/: Creates a new order object based on the contents of the user's cart and deletes the cart's items. Returns the newly created order object.
 
 - GET /api/orders/: Returns a list of all orders for the currently authenticated user.
+
+
+# Test Cases
+
+- To Run Models Tests use the following command
+```bash
+python manage.py test store_app.tests.test_models
+```
+
+- To Run Serializer Tests use the following command
+```bash
+python manage.py test store_app.tests.test_serializers
+```
+
+- To Run Views Tests use the following command
+```bash
+python manage.py test store_app.tests.test_views
+```
