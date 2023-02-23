@@ -1,6 +1,6 @@
 version: '3'
 services:
-  localhost:
+  db:
     image: mysql:5.7
     restart: always
     environment:
@@ -13,6 +13,7 @@ services:
   
   django:
     build: .
+    image: omarraafat14/bit68_task
     restart: always
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -20,7 +21,7 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - localhost
+      - db
   
   nginx:
     image: nginx
@@ -30,14 +31,5 @@ services:
     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - django
-  
-  # supervisor:
-  #   build: ./supervisor
-  #   volumes:
-  #     - ./supervisor/supervisord.conf:/etc/supervisor/supervisord.conf
-  #     - ./supervisor/conf.d:/etc/supervisor/conf.d
-  #   depends_on:
-  #     - django
-
 volumes:
   db_data:
