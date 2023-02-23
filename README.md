@@ -54,6 +54,8 @@ python manage.py runserver
 
 - [Docker Hub link of the image](https://hub.docker.com/r/omarraafat14/bit68_task)
 
+Note.
+> To Use the development server without docker, Kindly modify the ```DATABASE``` settings in ```settings``` file to be ``` "HOST":"localhost" ```. 
 
 # API Endpoints
 Here are the API endpoints that you can access:
