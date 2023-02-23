@@ -4,14 +4,12 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
-from ..models import Product, Cart, CartItem, Order, OrderItem
+from ..models import Product, Cart
 from ..serializers import (
-    UserSerializer,
     ProductSerializer,
-    CartItemSerializer,
     CartSerializer,
-    OrderSerializer
 )
+
 
 class UserRegistrationViewTestCase(TestCase):
     def setUp(self):
