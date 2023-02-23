@@ -36,7 +36,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     """Objects of the Order Model"""
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name='items',on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
 

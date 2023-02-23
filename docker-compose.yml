@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db:
+  localhost:
     image: mysql:5.7
     restart: always
     environment:
@@ -20,7 +20,7 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - db
+      - localhost
   
   nginx:
     image: nginx
