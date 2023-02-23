@@ -85,6 +85,8 @@ python manage.py test store_app.tests.test_views
   2. db: Serve our MySQL database
   3. inginx: Serve our nginx configurations
 
+- [Docker Hub link of the image](https://hub.docker.com/r/omarraafat14/bit68_task)
+
 
 ### NOTE
 - There are admin and user cerdentials provided in .env.example
