@@ -1,0 +1,43 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: ecommerce
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+  
+  django:
+    build: .
+    restart: always
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+  
+  nginx:
+    image: nginx
+    ports:
+    - "80:80"
+    volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - django
+  
+  # supervisor:
+  #   build: ./supervisor
+  #   volumes:
+  #     - ./supervisor/supervisord.conf:/etc/supervisor/supervisord.conf
+  #     - ./supervisor/conf.d:/etc/supervisor/conf.d
+  #   depends_on:
+  #     - django
+
+volumes:
+  db_data:

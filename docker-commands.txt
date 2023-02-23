@@ -1,0 +1,5 @@
+# creat a docker image
+docker build --tag <image_name>
+
+# create a container
+docker run --pulish 8000:8000 <name>
