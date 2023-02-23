@@ -7,7 +7,7 @@ Before running the code, ensure that you have the following requirements install
 - Python 3.x
 - Django
 - Django Rest Framework
-- MySQL (or another relationaldatabase management system)
+- MySQL
 
 
 # Instructions
@@ -77,3 +77,16 @@ python manage.py test store_app.tests.test_serializers
 ```bash
 python manage.py test store_app.tests.test_views
 ```
+
+# Docker configurations
+
+- Services:
+  1. django: Serve our django project
+  2. db: Serve our MySQL database
+  3. inginx: Serve our nginx configurations
+
+- [Docker Hub link of the image](https://hub.docker.com/r/omarraafat14/bit68_task)
+
+
+### NOTE
+- There are admin and user cerdentials provided in .env.example
