@@ -40,7 +40,8 @@ python manage.py runserver
 
 8. Navigate to http://localhost:8000/ in a web browser to access the API endpoints.
 
-** Instead you can use the docker image I created**
+
+**Instead you can use the docker image I created**
 # Docker configurations
 
 - Services:
