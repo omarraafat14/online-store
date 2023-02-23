@@ -40,6 +40,19 @@ python manage.py runserver
 
 8. Navigate to http://localhost:8000/ in a web browser to access the API endpoints.
 
+** Instead you can use the docker image I created**
+# Docker configurations
+
+- Services:
+  1. django: Serve our django project
+  2. db: Serve our MySQL database
+  3. inginx: Serve our nginx configurations
+
+- Run the project:
+  - After running the docker image, Navigate to http://localhost:8000/ in a web browser to access the API endpoints. 
+
+- [Docker Hub link of the image](https://hub.docker.com/r/omarraafat14/bit68_task)
+
 
 # API Endpoints
 Here are the API endpoints that you can access:
@@ -80,15 +93,6 @@ python manage.py test store_app.tests.test_serializers
 ```bash
 python manage.py test store_app.tests.test_views
 ```
-
-# Docker configurations
-
-- Services:
-  1. django: Serve our django project
-  2. db: Serve our MySQL database
-  3. inginx: Serve our nginx configurations
-
-- [Docker Hub link of the image](https://hub.docker.com/r/omarraafat14/bit68_task)
 
 
 ### NOTE
