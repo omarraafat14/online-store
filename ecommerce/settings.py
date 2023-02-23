@@ -26,26 +26,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local apps
     'store_app',
+
+    # Third-party apps
     'rest_framework',
-    'djoser',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
 ]
 
-DJOSER = {
-    "USER_ID_FIELD": "username",
-}
 
 REST_FRAMEWORK = {
     # Define Authentication types used
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 
     # Define Pagination number
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2,
+    'PAGE_SIZE': 4,
 
     # Define Throttle classes
     'DEFAULT_THROTTLE_CLASSES': [
@@ -55,8 +57,8 @@ REST_FRAMEWORK = {
 
     'DEFAULT_THROTTLE_RATES':  # throttle retes
     {
-        'anon': '20/minute',
-        'user': '50/minute',
+        'anon': '150/hour',
+        'user': '200/hour',
     },
 }
 

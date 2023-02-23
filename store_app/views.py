@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticated , IsAuthenticatedOrReadOnly
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import AccessToken , RefreshToken
 from .models import Product, Cart, CartItem, Order, OrderItem
 from .serializers import (
     UserSerializer,
@@ -17,6 +18,7 @@ from .serializers import (
 
 class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserSerializer
+    authentication_classes = []
 
     def post(self, request):
         username = request.POST.get('username')
@@ -32,6 +34,7 @@ class UserRegistrationView(generics.GenericAPIView):
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserSerializer
+    authentication_classes = []
 
     def post(self, request):
         username = request.data.get('username')
@@ -39,11 +42,14 @@ class UserLoginView(generics.GenericAPIView):
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
+        
         if user:
             login(request, user)
-            serializer = UserSerializer(user)
-            return Response(serializer.data)
-        return Response({'error': 'Invalid credentials'})
+            access = AccessToken.for_user(user)
+            refresh = RefreshToken.for_user(user)
+            return Response({'access': str(access), 'refresh': str(refresh)})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ProductListView(generics.ListAPIView):
@@ -57,7 +63,8 @@ class ProductListView(generics.ListAPIView):
 class CartView(generics.RetrieveUpdateAPIView):
     """represent a single model instance."""
     serializer_class = CartSerializer
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         """Returns an object instance that should be used for detail views."""
@@ -67,8 +74,8 @@ class CartView(generics.RetrieveUpdateAPIView):
 
 class AddToCartView(generics.CreateAPIView):
     serializer_class = CartItemSerializer
-    authentication_classes = [BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         product_id = request.data.get('product_id')
@@ -85,7 +92,7 @@ class AddToCartView(generics.CreateAPIView):
 class CreateOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    authentication_classes = [BasicAuthentication]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
         cart = get_object_or_404(Cart, user=request.user)
@@ -112,6 +119,7 @@ class CreateOrderView(generics.CreateAPIView):
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
