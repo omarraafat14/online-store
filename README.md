@@ -60,6 +60,9 @@ Here are the API endpoints that you can access:
 
 - GET /api/orders/: Returns a list of all orders for the currently authenticated user.
 
+Note.
+> I Added an **JSON collection** for easily use. 
+
 
 # Test Cases
 
