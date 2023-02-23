@@ -84,3 +84,7 @@ python manage.py test store_app.tests.test_views
   1. django: Serve our django project
   2. db: Serve our MySQL database
   3. inginx: Serve our nginx configurations
+
+
+### NOTE
+- There are admin and user cerdentials provided in .env.example
